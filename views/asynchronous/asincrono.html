@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATDM Simulator - Versión Moderna</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="../../css/asynchronous/atdm-styles.css">
+    <link rel="stylesheet" href="../../css/asynchronous/atdm-modern-theme.css">
+    
+    <style>
+        /* Layout Principal */
+        .app-container-modern {
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+        
+        .app-header-modern {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            padding: var(--space-6) var(--space-8);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+        
+        .header-content-modern {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .brand-modern {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .brand-icon-modern {
+            font-size: 2.5rem;
+        }
+        
+        .brand-title {
+            font-size: 1.875rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .brand-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        /* Main Layout */
+        .main-layout-modern {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-8);
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: var(--space-8);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-layout-modern {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Panel de Control */
+        .control-sidebar-modern {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-lg);
+            height: fit-content;
+            position: sticky;
+            top: var(--space-8);
+        }
+        
+        .panel-header-modern {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--space-6);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        /* Área de Visualización */
+        .visualization-main-modern {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .status-indicator-modern {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .status-text {
+            font-size: 1.125rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .status-badge {
+            background: var(--bg-tertiary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Flow Diagram */
+        .flow-diagram {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .flow-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+        
+        /* Buffers Grid */
+        .buffers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .buffer-card {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            transition: all var(--transition-base);
+        }
+        
+        .buffer-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .buffer-header {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .buffer-content {
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-3);
+            min-height: 60px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+        
+        /* MUX/DEMUX Blocks */
+        .processor-block {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-3);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .processor-block.active {
+           animation: processorPulse 2s infinite;
+        }
+        
+        @keyframes processorPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: var(--shadow-lg);
+            }
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            }
+        }
+        
+        .processor-icon {
+            font-size: 2rem;
+        }
+        
+        .processor-block.active .processor-icon {
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .processor-label {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+        
+        .processor-status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.8125rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Frame History */
+        .frame-history-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .frame-history-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .frames-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: var(--space-2);
+        }
+        
+        .frames-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .frames-scroll::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+        }
+        
+        .frames-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: var(--radius-full);
+        }
+        
+        .frame-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+        }
+        
+        .frame-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .frame-item-header {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--primary-indigo);
+            margin-bottom: var(--space-3);
+        }
+        
+        .frame-slots {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+        
+        .frame-slot-modern {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        /* Dashboard de Estadísticas */
+.stats-dashboard {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .dashboard-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .stats-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .stat-card-modern {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            transition: all var(--transition-base);
+        }
+        
+        .stat-card-modern:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-icon-modern {
+            font-size: 2rem;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+        }
+        
+        .stat-content {
+            flex: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: var(--space-1);
+        }
+        
+        .stat-value-modern {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        /* Event Log */
+        .event-log {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+        }
+        
+        .log-header {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .log-scroll {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: var(--space-2);
+        }
+        
+        .log-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .log-scroll::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-full);
+        }
+        
+        .log-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary-indigo);
+            border-radius: var(--radius-full);
+        }
+        
+        .log-entry {
+            padding: var(--space-2);
+            margin-bottom: var(--space-2);
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            font-size: 0.8125rem;
+            display: flex;
+            gap: var(--space-3);
+        }
+        
+        .log-timestamp {
+            color: var(--text-secondary);
+            font-weight: 500;
+            min-width: 4rem;
+        }
+        
+        .log-message {
+            color: var(--text-primary);
+        }
+        
+        /* Charts */
+        .chart-container {
+            margin-top: var(--space-4);
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- Cargar el simulador primero -->
+    <script src="../../js/models/ATDMSimulator.js"></script>
+    
+    <!-- Script de integración con React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+        
+        function ATDMApp() {
+            // Estados de configuración
+            const [numChannels, setNumChannels] = useState(5);
+            const [frameSize, setFrameSize] = useState(3);
+            const [animationSpeed, setAnimationSpeed] = useState(1500);
+            const [inputData, setInputData] = useState('AAAAA,BBBB,CCC,DD,E');
+            const [darkMode, setDarkMode] = useState(false);
+            
+            // Estados de simulación
+            const [simulator, setSimulator] = useState(null);
+            const [isRunning, setIsRunning] = useState(false);
+            const [isPaused, setIsPaused] = useState(false);
+            const [framesHistory, setFramesHistory] = useState([]);
+            const [inputBuffers, setInputBuffers] = useState([]);
+            const [outputBuffers, setOutputBuffers] = useState([]);
+            const [stats, setStats] = useState(null);
+            const [eventLog, setEventLog] = useState([]);
+            
+            // Estado de UI
+            const [sectionsCollapsed, setSectionsCollapsed] = useState({
+                params: false,
+                data: false
+            });
+            
+            const intervalRef = useRef(null);
+            const chartRef = useRef(null);
+            
+            // Modo oscuro
+            useEffect(() => {
+                document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+            }, [darkMode]);
+            
+            // Inicializar simulador
+            useEffect(() => {
+                const sim = new ATDMSimulator(numChannels, frameSize);
+                setSimulator(sim);
+                updateView(sim);
+                addLogEntry(`Sistema inicializado con ${numChannels} canales y ${frameSize} slots por trama`);
+            }, [numChannels, frameSize]);
+            
+            // Función para agregar entrada al log
+            const addLogEntry = (message) => {
+                const timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
+                setEventLog(prev => [{timestamp, message}, ...prev].slice(0, 50)); // Máximo 50 entradas
+            };
+            
+            // Actualizar vista
+            const updateView = (sim) => {
+                setInputBuffers(sim.getInputBuffers());
+                setOutputBuffers(sim.getOutputBuffers());
+                setStats(sim.getStats());
+            };
+            
+            // Validación de entrada
+            const inputValidation = useMemo(() => {
+                if (!inputData.trim()) {
+                    return { valid: false, message: 'Ingresa datos para simular' };
+                }
+                
+                const items = inputData.split(',').map(item => item.trim()).filter(item => item.length > 0);
+                
+                if (items.length === 0) {
+                    return { valid: false, message: 'Datos vacíos' };
+                }
+                
+                if (items.length !== numChannels) {
+                    return { 
+                        valid: false, 
+                        message: `Tienes ${items.length} elementos pero ${numChannels} canales`
+                    };
+                }
+                
+                return { valid: true, message: `${items.length} elementos válidos` };
+            }, [inputData, numChannels]);
+            
+            const isInputValid = inputValidation.valid;
+            
+            // Paso de animación
+            const animationStep = () => {
+                if (!simulator || isPaused) return;
+                
+                const frame = simulator.stepMux();
+                
+                if (frame) {
+                    setFramesHistory(prev => [...prev, frame]);
+                    addLogEntry(`Trama #${framesHistory.length + 1} formada con ${frame.length} slots`);
+                    
+                    simulator.stepDemux(frame);
+                    updateView(simulator);
+                }
+                
+                updateView(simulator);
+                
+                if (simulator.isComplete()) {
+                    stopAnimation();
+                    addLogEntry('✓ Simulación completada');
+                }
+            };
+            
+            // Control de animación
+            useEffect(() => {
+                if (isRunning && !isPaused && simulator) {
+                    if (intervalRef.current) {
+                        clearInterval(intervalRef.current);
+                    }
+                    intervalRef.current = setInterval(animationStep, animationSpeed);
+                } else {
+                    if (intervalRef.current) {
+                        clearInterval(intervalRef.current);
+                    }
+                }
+                return () => {
+                    if (intervalRef.current) {
+                        clearInterval(intervalRef.current);
+                    }
+                };
+            }, [isRunning, isPaused, simulator, animationSpeed, animationStep]);
+            
+            const startAnimation = () => {
+                if (!simulator || !isInputValid) return;
+                
+                if (isPaused) {
+                    setIsPaused(false);
+                    addLogEntry('▶️ Simulación reanudada');
+                } else {
+                    // Limpiar datos anteriores antes de iniciar nueva simulación
+                    simulator.reset();
+                    setFramesHistory([]);
+                    updateView(simulator);
+                    
+                    // Cargar nuevos datos e iniciar
+                    simulator.loadData(inputData);
+                    updateView(simulator);
+                    setIsRunning(true);
+                    addLogEntry('▶️ Simulación iniciada (datos anteriores limpiados)');
+                }
+            };
+            
+            const pauseAnimation = () => {
+                setIsPaused(true);
+                addLogEntry('⏸️ Simulación pausada');
+            };
+            
+            const stopAnimation = () => {
+                setIsRunning(false);
+                setIsPaused(false);
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                }
+                // NO limpiar buffers - mantener datos visibles
+                addLogEntry('⏹️ Simulación detenida (datos preservados)');
+            };
+            
+            const resetAnimation = () => {
+                stopAnimation();
+                if (simulator) {
+                    simulator.reset();
+                    updateView(simulator);
+                }
+                setFramesHistory([]);
+                setEventLog([]);
+                addLogEntry('🔄 Sistema reiniciado');
+            };
+            
+            const toggleSection = (section) => {
+                setSectionsCollapsed(prev => ({
+                    ...prev,
+                    [section]: !prev[section]
+                }));
+            };
+            
+            const getSpeedLabel = () => {
+                if (animationSpeed <= 800) return '⚡ Muy rápido';
+                if (animationSpeed <= 1500) return '🏃 Rápido';
+                if (animationSpeed <= 2200) return '🚶 Normal';
+                return '🐢 Lento';
+            };
+            
+            return React.createElement('div', { className: 'app-container-modern' },
+                // Theme Toggle
+                React.createElement('div', {
+                    className: 'theme-toggle',
+                    onClick: () => setDarkMode(!darkMode)
+                },
+                    React.createElement('i', { className: `fas fa-${darkMode ? 'sun' : 'moon'}` }),
+                    darkMode ? 'Claro' : 'Oscuro'
+                ),
+                
+                // Header
+                React.createElement('header', { className: 'app-header-modern' },
+                    React.createElement('div', { className: 'header-content-modern' },
+                        React.createElement('div', { className: 'brand-modern' },
+                            React.createElement('div', { className: 'brand-icon-modern' }, '🌐'),
+                            React.createElement('div', {},
+                                React.createElement('h1', { className: 'brand-title' }, 'ATDM SIMULATOR'),
+                                React.createElement('p', { className: 'brand-subtitle' }, 
+                                    'Multiplexación Asíncrona • Direccionamiento Dinámico • Visualización en Tiempo Real'
+                                )
+                            )
+                        )
+                    )
+                ),
+                
+                // Main
+                React.createElement('main', { className: 'main-layout-modern' },
+                    // Sidebar de Control
+                    React.createElement('aside', { className: 'control-sidebar-modern' },
+                        React.createElement('div', { className: 'panel-header-modern' },
+                            React.createElement('i', { className: 'fas fa-sliders-h' }),
+                            'Configuración'
+                        ),
+                        
+                        // Sección: Parámetros del Sistema
+                        React.createElement('div', { className: 'config-section' },
+                            React.createElement('div', {
+                                className: 'section-header',
+                                onClick: () => toggleSection('params')
+                            },
+                                React.createElement('div', { className: 'section-title' },
+                                    React.createElement('span', { className: 'section-icon' }, '⚙️'),
+                                    'Parámetros del Sistema'
+                                ),
+                                React.createElement('i', {
+                                    className: `fas fa-chevron-down section-toggle ${sectionsCollapsed.params ? 'collapsed' : ''}`
+                                })
+                            ),
+                            React.createElement('div', {
+                                className: `section-content ${sectionsCollapsed.params ? 'collapsed' : ''}`
+                            },
+                                // Canales
+                                React.createElement('div', { className: 'slider-group' },
+                                    React.createElement('div', { className: 'slider-label' },
+                                        React.createElement('span', {},
+                                            'Canales (n)',
+                                            React.createElement('span', {
+                                                className: 'tooltip-icon',
+                                                'data-tooltip': 'Número de canales de entrada independientes'
+                                            }, 'i')
+                                        ),
+                                        React.createElement('span', { className: 'value-badge' }, numChannels)
+                                    ),
+                                    React.createElement('input', {
+                                        type: 'range',
+                                        min: 2,
+                                        max: 8,
+                                        value: numChannels,
+                                        className: 'slider-modern',
+                                        onChange: (e) => {
+                                            const val = parseInt(e.target.value);
+                                            setNumChannels(val);
+                                            if (frameSize > val) setFrameSize(val);
+                                        },
+                                        disabled: isRunning
+                                    }),
+                                    React.createElement('div', { className: 'info-text' },
+                                        stats ? `Bits de dirección: ${stats.addressBits}` : ''
+                                    )
+                                ),
+                                
+                                // Slots
+                                React.createElement('div', { className: 'slider-group' },
+                                    React.createElement('div', { className: 'slider-label' },
+                                        React.createElement('span', {},
+                                            'Slots por Trama (m)',
+                                            React.createElement('span', {
+                                                className: 'tooltip-icon',
+                                                'data-tooltip': 'Capacidad de cada trama (m ≤ n)'
+                                            }, 'i')
+                                        ),
+                                        React.createElement('span', { className: 'value-badge' }, frameSize)
+                                    ),
+                                    React.createElement('input', {
+                                        type: 'range',
+                                        min: 1,
+                                        max: numChannels,
+                                        value: Math.min(frameSize, numChannels),
+                                        className: 'slider-modern',
+                                        onChange: (e) => {
+                                            const val = parseInt(e.target.value);
+                                            setFrameSize(Math.min(val, numChannels));
+                                        },
+                                        disabled: isRunning
+                                    }),
+                                    React.createElement('div', { className: 'info-text' },
+                                        frameSize === numChannels 
+                                            ? '⚠️ Máximo alcanzado (m = n)'
+                                            : 'm ≤ n (Multiplexación Estadística)'
+                                    )
+                                ),
+                                
+                                // Velocidad
+                                React.createElement('div', { className: 'slider-group' },
+                                    React.createElement('div', { className: 'slider-label' },
+                                        React.createElement('span', {},
+                                            'Velocidad',
+                                            React.createElement('span', {
+                                                className: 'tooltip-icon',
+                                                'data-tooltip': 'Velocidad del multiplexor (ms por trama)'
+                                            }, 'i')
+                                        ),
+                                        React.createElement('span', { className: 'value-badge' }, `${animationSpeed}ms`)
+                                    ),
+                                    React.createElement('input', {
+                                        type: 'range',
+                                        min: 500,
+                                        max: 3000,
+                                        step: 100,
+                                        value: animationSpeed,
+                                        className: 'slider-modern',
+                                        onChange: (e) => setAnimationSpeed(parseInt(e.target.value))
+                                    }),
+                                    React.createElement('div', { className: 'info-text' },
+                                        getSpeedLabel()
+                                    )
+                                )
+                            )
+                        ),
+                        
+                        // Sección: Datos de Simulación
+                        React.createElement('div', { className: 'config-section' },
+                            React.createElement('div', {
+                                className: 'section-header',
+                                onClick: () => toggleSection('data')
+                            },
+                                React.createElement('div', { className: 'section-title' },
+                                    React.createElement('span', { className: 'section-icon' }, '📝'),
+                                    'Datos de Simulación'
+                                ),
+                                React.createElement('i', {
+                                    className: `fas fa-chevron-down section-toggle ${sectionsCollapsed.data ? 'collapsed' : ''}`
+                                })
+                            ),
+                            React.createElement('div', {
+                                className: `section-content ${sectionsCollapsed.data ? 'collapsed' : ''}`
+                            },
+                                React.createElement('div', { className: 'slider-group' },
+                                    React.createElement('div', { className: 'slider-label' },
+                                        React.createElement('span', {}, 'Datos de Entrada'),
+                                        React.createElement('div', { className: 'input-validation' },
+                                            isInputValid
+                                                ? React.createElement('i', { className: 'fas fa-check-circle validation-icon valid' })
+                                                : React.createElement('i', { className: 'fas fa-times-circle validation-icon invalid' })
+                                        )
+                                    ),
+                                    React.createElement('textarea', {
+                                        className: 'data-input-modern',
+                                        style: {
+                                            width: '100%',
+                                            minHeight: '80px',
+                                            padding: 'var(--space-3)',
+                                            border: `2px solid ${isInputValid ? 'var(--success-green)' : 'var(--border-color)'}`,
+                                            borderRadius: 'var(--radius-md)',
+                                            fontFamily: "'Courier New', monospace",
+                                            fontSize: '0.875rem',
+                                            background: 'var(--bg-tertiary)',
+                                            color: 'var(--text-primary)',
+                                            resize: 'vertical'
+                                        },
+                                        value: inputData,
+                                        onChange: (e) => setInputData(e.target.value),
+                                        placeholder: 'Datos separados por comas',
+                                        disabled: isRunning
+                                    }),
+                                    React.createElement('div', { 
+                                        className: 'info-text',
+                                        style: { color: isInputValid ? 'var(--success-green)' : 'var(--danger-red)' }
+                                    },
+                                        inputValidation.message
+                                    )
+                                ),
+                                
+                                // Botones de Control
+                                React.createElement('div', { className: 'button-group' },
+                                    !isRunning
+                                        ? React.createElement('button', {
+                                            className: 'btn-action btn-start',
+                                            onClick: startAnimation,
+                                            disabled: !isInputValid
+                                        },
+                                            React.createElement('i', { className: 'fas fa-play' }),
+                                            'Iniciar'
+                                        )
+                                        : isPaused
+                                            ? React.createElement('button', {
+                                                className: 'btn-action btn-start',
+                                                onClick: startAnimation
+                                            },
+                                                React.createElement('i', { className: 'fas fa-play' }),
+                                                'Reanudar'
+                                            )
+                                            : React.createElement('button', {
+                                                className: 'btn-action btn-pause',
+                                                onClick: pauseAnimation
+                                            },
+                                                React.createElement('i', { className: 'fas fa-pause' }),
+                                                'Pausar'
+                                            ),
+                                    
+                                    isRunning && React.createElement('button', {
+                                        className: 'btn-action btn-stop',
+                                        onClick: stopAnimation
+                                    },
+                                        React.createElement('i', { className: 'fas fa-stop' }),
+                                        'Detener'
+                                    ),
+                                    
+                                    React.createElement('button', {
+                                        className: 'btn-action btn-reset',
+                                        onClick: resetAnimation
+                                    },
+                                        React.createElement('i', { className: 'fas fa-redo' }),
+                                        'Reiniciar'
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    
+                    // Área Principal
+                    React.createElement('section', { className: 'visualization-main-modern' },
+                        // Status Indicator
+                        React.createElement('div', { className: 'status-indicator-modern' },
+                            React.createElement('div', { className: 'status-text' },
+                                isRunning
+                                    ? isPaused
+                                        ? React.createElement(React.Fragment, {}, '⏸️ PAUSADO')
+                                        : React.createElement(React.Fragment, {}, '🟢 EN EJECUCIÓN')
+                                    : React.createElement(React.Fragment, {}, '⚪ EN ESPERA')
+                            ),
+                            React.createElement('div', { className: 'status-badge' },
+                                `${numChannels} canales • ${frameSize} slots • ${stats ? stats.addressBits : 0} bits`
+                            )
+                        ),
+                        
+                        // Flow Diagram
+                        React.createElement('div', { className: 'flow-diagram' },
+                            React.createElement('div', { className: 'flow-container' },
+                                // Buffers de Entrada
+                                React.createElement('div', {},
+                                    React.createElement('h3', { style: { marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' } },
+                                        React.createElement('i', { className: 'fas fa-inbox' }),
+                                        'Buffers de Entrada'
+                                    ),
+                                    React.createElement('div', { className: 'buffers-grid' },
+                                        inputBuffers.map((buffer, i) =>
+                                            React.createElement('div', { key: i, className: 'buffer-card' },
+                                                React.createElement('div', { className: 'buffer-header' },
+                                                    `Canal ${i}`,
+                                                    React.createElement('span', {}, buffer.length || 0)
+                                                ),
+                                                React.createElement('div', { className: 'buffer-content' },
+                                                    buffer || '(vacío)'
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
+                                
+                                // MUX
+                                React.createElement('div', { style: { textAlign: 'center' } },
+                                    React.createElement('i', { className: 'flow-arrow fas fa-arrow-down' }),
+                                    React.createElement('div', { className: `processor-block ${isRunning && !isPaused ? 'active' : ''}` },
+                                        React.createElement('div', { className: 'processor-icon' }, '⚡'),
+                                        React.createElement('div', { className: 'processor-label' }, 'MUX'),
+                                        React.createElement('div', { className: 'processor-status' },
+                                            isRunning && !isPaused ? 'Multiplexando...' : 'En espera'
+                                        )
+                                    ),
+                                    React.createElement('i', { className: 'flow-arrow fas fa-arrow-down' })
+                                ),
+                                
+                                // Frame History
+                                React.createElement('div', { className: 'frame-history-card' },
+                                    React.createElement('div', { className: 'frame-history-title' },
+                                        React.createElement('i', { className: 'fas fa-layer-group' }),
+                                        'Historial de Tramas'
+                                    ),
+                                    React.createElement('div', { className: 'frames-scroll' },
+                                        framesHistory.length === 0
+                                            ? React.createElement('div', { className: 'empty-state' },
+                                                'Las tramas aparecerán aquí durante la simulación'
+                                            )
+                                            : framesHistory.map((frame, i) =>
+                                                React.createElement('div', { key: i, className: 'frame-item' },
+                                                    React.createElement('div', { className: 'frame-item-header' },
+                                                        `Trama #${i + 1} (${frame.length} slots)`
+                                                    ),
+                                                    React.createElement('div', { className: 'frame-slots' },
+                                                        frame.map((slot, j) =>
+                                                            React.createElement('div', {
+                                                                key: j,
+                                                                className: 'frame-slot-modern'
+                                                            },
+                                                                `[${slot.binaryAddress}|${slot.data}] C${slot.channelID}`
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                    )
+                                ),
+                                
+                                // DEMUX
+                                React.createElement('div', { style: { textAlign: 'center' } },
+                                    React.createElement('i', { className: 'flow-arrow fas fa-arrow-down' }),
+                                    React.createElement('div', { className: `processor-block ${isRunning && !isPaused ? 'active' : ''}` },
+                                        React.createElement('div', { className: 'processor-icon' }, '⚡'),
+                                        React.createElement('div', { className: 'processor-label' }, 'DEMUX'),
+                                        React.createElement('div', { className: 'processor-status' },
+                                            isRunning && !isPaused ? 'Demultiplexando...' : 'En espera'
+                                        )
+                                    ),
+                                    React.createElement('i', { className: 'flow-arrow fas fa-arrow-down' })
+                                ),
+                                
+                                // Buffers de Salida
+                                React.createElement('div', {},
+                                    React.createElement('h3', { style: { marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' } },
+                                        React.createElement('i', { className: 'fas fa-box-open' }),
+                                        'Buffers de Salida'
+                                    ),
+                                    React.createElement('div', { className: 'buffers-grid' },
+                                        outputBuffers.map((buffer, i) =>
+                                            React.createElement('div', { key: i, className: 'buffer-card' },
+                                                React.createElement('div', { className: 'buffer-header' },
+                                                    `Canal ${i}`,
+                                                    React.createElement('span', {}, buffer.length || 0)
+                                                ),
+                                                React.createElement('div', { className: 'buffer-content' },
+                                                    buffer || '(vacío)'
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        
+                        // Dashboard de Estadísticas
+                        stats && React.createElement('div', { className: 'stats-dashboard' },
+                            React.createElement('div', { className: 'dashboard-title' },
+                                React.createElement('i', { className: 'fas fa-chart-line' }),
+                                'Dashboard en Tiempo Real'
+                            ),
+                            React.createElement('div', { className: 'stats-grid-modern' },
+                                React.createElement('div', { className: 'stat-card-modern' },
+                                    React.createElement('div', { className: 'stat-icon-modern' },
+                                        React.createElement('i', { className: 'fas fa-layer-group' })
+                                    ),
+                                    React.createElement('div', { className: 'stat-content' },
+                                        React.createElement('div', { className: 'stat-label' }, 'Tramas Enviadas'),
+                                        React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, stats.framesSent)
+                                    )
+                                ),
+                                React.createElement('div', { className: 'stat-card-modern' },
+                                    React.createElement('div', { className: 'stat-icon-modern' },
+                                        React.createElement('i', { className: 'fas fa-check-circle' })
+                                    ),
+                                    React.createElement('div', { className: 'stat-content' },
+                                        React.createElement('div', { className: 'stat-label' }, 'Datos Procesados'),
+                                        React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, stats.processed)
+                                    )
+                                ),
+                                React.createElement('div', { className: 'stat-card-modern' },
+                                    React.createElement('div', { className: 'stat-icon-modern' },
+                                        React.createElement('i', { className: 'fas fa-hourglass-half' })
+                                    ),
+                                    React.createElement('div', { className: 'stat-content' },
+                                        React.createElement('div', { className: 'stat-label' }, 'Pendientes'),
+                                        React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, stats.pending)
+                                    )
+                                ),
+                                React.createElement('div', { className: 'stat-card-modern' },
+                                    React.createElement('div', { className: 'stat-icon-modern' },
+                                        React.createElement('i', { className: 'fas fa-percentage' })
+                                    ),
+                                    React.createElement('div', { className: 'stat-content' },
+                                        React.createElement('div', { className: 'stat-label' }, 'Eficiencia'),
+                                        React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, `${stats.efficiency}%`)
+                                    )
+                                )
+                            ),
+                            
+                            // Event Log
+                            React.createElement('div', { className: 'event-log' },
+                                React.createElement('div', { className: 'log-header' },
+                                    React.createElement('i', { className: 'fas fa-list' }),
+                                    'Registro de Eventos'
+                                ),
+                                React.createElement('div', { className: 'log-scroll' },
+                                    eventLog.length === 0
+                                        ? React.createElement('div', { className: 'empty-state', style: { padding: 'var(--space-4)' } },
+                                            'Los eventos aparecerán aquí'
+                                        )
+                                        : eventLog.map((entry, i) =>
+                                            React.createElement('div', { key: i, className: 'log-entry' },
+                                                React.createElement('span', { className: 'log-timestamp' }, entry.timestamp),
+                                                React.createElement('span', { className: 'log-message' }, entry.message)
+                                            )
+                                        )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+        
+        // Renderizar
+        ReactDOM.render(
+            React.createElement(ATDMApp),
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

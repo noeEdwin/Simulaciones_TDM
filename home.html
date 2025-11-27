@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fundamentos de Telecomunicaciones | TDM</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="css/home/home.css" />
+  </head>
+  <body>
+    <a
+      href="nosotros.html"
+      style="
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 15px;
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+        font-weight: 600;
+        z-index: 10;
+      "
+    >
+      <i class="fas fa-users"></i> Equipo
+    </a>
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="container">
+      <header class="main-header">
+        <div class="logo-container">
+          <i class="fas fa-globe-americas logo-icon"></i>
+          <div class="logo-text">
+            <h1>Fundamentos de Telecomunicaciones</h1>
+            <span>Multiplexación por División de Tiempo</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="selection-area">
+        <h2>Elige el tipo de simulación</h2>
+
+        <div class="cards-container">
+          <a href="views/synchronous/sincrono.html" class="card tdm-card">
+            <div class="card-icon sync-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3>TDM Síncrono</h3>
+            <p class="description">
+              Multiplexación determinística. Asignación de ranuras de tiempo
+              fijas y predecibles para cada usuario.
+            </p>
+            <ul class="features">
+              <li><i class="fas fa-check"></i> Time Slots Fijos</li>
+              <li><i class="fas fa-check"></i> Sin colisiones</li>
+              <li><i class="fas fa-check"></i> Mayor simplicidad</li>
+            </ul>
+            <div class="btn-action">
+              Iniciar Simulación <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+
+          <a href="views/asynchronous/asincrono.html" class="card tdm-card">
+            <div class="card-icon async-icon">
+              <i class="fas fa-network-wired"></i>
+            </div>
+            <h3>TDM Asíncrono</h3>
+            <p class="description">
+              Multiplexación estadística. Asignación dinámica bajo demanda para
+              optimizar el ancho de banda.
+            </p>
+            <ul class="features">
+              <li><i class="fas fa-check"></i> Time Slots Dinámicos</li>
+              <li><i class="fas fa-check"></i> Mayor eficiencia</li>
+              <li><i class="fas fa-check"></i> Headers de direccionamiento</li>
+            </ul>
+            <div class="btn-action secondary">
+              Iniciar Simulación <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+          <a href="views/pages/quiz.html" class="card tdm-card card-quiz">
+            <div class="card-icon quiz-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h3>Test de Conocimiento</h3>
+            <p class="description">
+              Pon a prueba lo aprendido. Responde 5 preguntas clave sobre
+              Multiplexación.
+            </p>
+            <ul class="features">
+              <li><i class="fas fa-check"></i> Preguntas aleatorias</li>
+              <li><i class="fas fa-check"></i> Puntaje inmediato</li>
+              <li><i class="fas fa-check"></i> Retroalimentación</li>
+            </ul>
+            <div class="btn-action secondary">
+              Iniciar Test <i class="fas fa-play"></i>
+            </div>
+          </a>
+        </div>
+      </main>
+
+      <footer class="main-footer">
+        <p>© 2025 Ingeniería de Software - Proyecto de Simulación</p>
+      </footer>
+    </div>
+    <button id="helpBtn" class="help-floating-btn">
+      <i class="fas fa-question"></i>
+    </button>
+
+    <div id="theoryModal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+
+        <div class="modal-header">
+          <h2><i class="fas fa-book"></i> Conceptos Clave</h2>
+          <div class="modal-tabs">
+            <button
+              class="tab-link active"
+              onclick="openTab(event, 'TeoriaSync')"
+            >
+              TDM Síncrono
+            </button>
+            <button class="tab-link" onclick="openTab(event, 'TeoriaAsync')">
+              TDM Asíncrono
+            </button>
+          </div>
+        </div>
+
+        <div id="TeoriaSync" class="tab-content" style="display: block">
+          <div class="theory-grid">
+            <div class="theory-text">
+              <h3>Multiplexación por División de Tiempo Síncrona</h3>
+              <p>
+                Es la forma clásica de TDM. El multiplexor asigna una ranura de
+                tiempo (time slot) fija a cada dispositivo conectado, tenga
+                datos para enviar o no.
+              </p>
+
+              <h4><i class="fas fa-thumbs-up"></i> Ventajas</h4>
+              <ul>
+                <li>Simple de implementar.</li>
+                <li>Garantiza ancho de banda a cada usuario.</li>
+                <li>
+                  No requiere "direccionamiento" (el orden indica el dueño).
+                </li>
+              </ul>
+
+              <h4><i class="fas fa-thumbs-down"></i> Desventajas</h4>
+              <ul>
+                <li>
+                  Ineficiente: Si un usuario no transmite, su espacio se
+                  desperdicia (envía espacios vacíos).
+                </li>
+              </ul>
+            </div>
+            <div class="theory-diagram">
+              <div class="diagram-placeholder">
+                <i class="fas fa-bolt"></i>
+                <span>Diagrama Síncrono</span>
+                <div class="diagram-visual-sync">
+                  <div>A</div>
+                  <div>B</div>
+                  <div>C</div>
+                  <div>A</div>
+                  <div>B</div>
+                  <div>C</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="TeoriaAsync" class="tab-content" style="display: none">
+          <div class="theory-grid">
+            <div class="theory-text">
+              <h3>Multiplexación Estadística (Asíncrona)</h3>
+              <p>
+                El ancho de banda se asigna bajo demanda. Solo los dispositivos
+                que tienen algo que enviar ocupan las ranuras de tiempo.
+              </p>
+
+              <h4><i class="fas fa-thumbs-up"></i> Ventajas</h4>
+              <ul>
+                <li>
+                  Muy eficiente: No se desperdicia tiempo en canales inactivos.
+                </li>
+                <li>
+                  Soporta más usuarios conectados que ranuras disponibles.
+                </li>
+              </ul>
+
+              <h4><i class="fas fa-thumbs-down"></i> Desventajas</h4>
+              <ul>
+                <li>
+                  Complejidad: Requiere buffers (memoria) y direccionamiento.
+                </li>
+                <li>
+                  Cada paquete debe llevar la dirección de destino (Overhead).
+                </li>
+              </ul>
+            </div>
+            <div class="theory-diagram">
+              <div class="diagram-placeholder">
+                <i class="fas fa-network-wired"></i>
+                <span>Diagrama Asíncrono</span>
+                <div class="diagram-visual-async">
+                  <div>A1</div>
+                  <div>C1</div>
+                  <div>A2</div>
+                  <div>B1</div>
+                  <div>C2</div>
+                </div>
+                <small>*El orden varía según la demanda</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- add script so help button and modal logic work on this page -->
+    <script>
+      // Modal functionality
+      const helpBtn = document.getElementById('helpBtn');
+      const modal = document.getElementById('theoryModal');
+      const closeBtn = document.querySelector('.close-modal');
+
+      helpBtn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+
+      closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      function openTab(evt, tabName) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(tab => tab.style.display = 'none');
+        
+        const tabLinks = document.querySelectorAll('.tab-link');
+        tabLinks.forEach(link => link.classList.remove('active'));
+        
+        document.getElementById(tabName).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+      }
+    </script>
+  </body>
+</html>

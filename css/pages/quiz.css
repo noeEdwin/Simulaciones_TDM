@@ -1,0 +1,149 @@
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --correct-color: #10b981;
+  --wrong-color: #ef4444;
+  --text-color: #1e293b;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--primary-gradient);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.quiz-container {
+  background: var(--glass-bg);
+  width: 90%;
+  max-width: 600px;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  text-decoration: none;
+  color: #64748b;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.back-btn:hover {
+  color: #764ba2;
+}
+
+.progress-indicator {
+  width: 60%;
+  text-align: right;
+}
+.progress-bar {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #764ba2;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+#question-text {
+  font-size: 1.4rem;
+  color: var(--text-color);
+  margin-bottom: 25px;
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  color: var(--text-color);
+}
+
+.option-btn:hover {
+  border-color: #764ba2;
+  background: #f8fafc;
+}
+
+.option-btn.correct {
+  background: var(--correct-color);
+  color: white;
+  border-color: var(--correct-color);
+}
+
+.option-btn.wrong {
+  background: var(--wrong-color);
+  color: white;
+  border-color: var(--wrong-color);
+}
+
+/* Estados de visibilidad */
+.hidden {
+  display: none;
+}
+
+/* Resultados */
+.score-circle {
+  width: 120px;
+  height: 120px;
+  background: var(--primary-gradient);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+  color: white;
+}
+#score-number {
+  font-size: 3rem;
+  font-weight: 800;
+}
+.score-total {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.btn {
+  padding: 12px 25px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 5px;
+  text-decoration: none;
+  display: inline-block;
+}
+.retry {
+  background: #1e293b;
+  color: white;
+}
+.home {
+  background: #e2e8f0;
+  color: #1e293b;
+}

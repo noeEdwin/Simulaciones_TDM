@@ -1,0 +1,521 @@
+/* ===== VARIABLES Y RESET ===== */
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --accent-sync: #667eea;
+  --accent-async: #10b981; /* Un verde menta para diferenciar */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  height: 100%;
+  background: var(--primary-gradient);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 40px 0;
+  position: relative;
+}
+
+.container {
+  background: transparent;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+  z-index: 1;
+  position: relative;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ===== DECORACIÓN DE FONDO ===== */
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background: white;
+  top: -100px;
+  left: -100px;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: white;
+  bottom: -50px;
+  right: -50px;
+}
+
+/* ===== HEADER ===== */
+.main-header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: white;
+}
+
+.logo-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px 30px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+}
+
+.logo-text h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.logo-text span {
+  font-size: 0.9rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ===== SELECTION AREA ===== */
+.selection-area h2 {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+  font-weight: 300;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  justify-content: center;
+}
+
+/* ===== CARDS DESIGN ===== */
+.card {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 40px 30px;
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.card-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-icon {
+  transform: rotate(10deg) scale(1.1);
+}
+
+.sync-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.async-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+}
+.quiz-icon {
+  /* Un degradado que mezcla el morado y el verde menta para diferenciarlo */
+  background: linear-gradient(135deg, #764ba2 0%, #10b981 100%);
+  /* Una sombra suave para darle profundidad */
+  box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+}
+
+.card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.description {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.features {
+  list-style: none;
+  margin-bottom: 30px;
+  text-align: left;
+  width: 100%;
+}
+
+.features li {
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.features li i {
+  color: var(--accent-sync);
+}
+
+.btn-action {
+  margin-top: auto;
+  padding: 12px 30px;
+  border-radius: 50px;
+  background: var(--text-dark);
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card:hover .btn-action {
+  background: var(--primary-gradient);
+  padding-right: 40px; /* Efecto de estiramiento */
+}
+
+/* ===== FOOTER ===== */
+.main-footer {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 50px;
+  font-size: 0.8rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .logo-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===== BOTÓN FLOTANTE ===== */
+.help-floating-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(118, 75, 162, 0.5);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-floating-btn:hover {
+  transform: scale(1.1) rotate(10deg);
+}
+
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay {
+  display: none; /* Oculto por defecto */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== MODAL CONTENT ===== */
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 20px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-modal:hover {
+  color: #ef4444;
+}
+
+/* ===== TABS ===== */
+.modal-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
+}
+.modal-header h2 {
+  color: #1e293b;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.tab-link {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-link:hover {
+  color: #764ba2;
+  background: #f8fafc;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-link.active {
+  color: #764ba2;
+  border-bottom-color: #764ba2;
+}
+
+/* ===== CONTENIDO TEORÍA ===== */
+.theory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.theory-text h3 {
+  color: #764ba2;
+  margin-bottom: 10px;
+}
+.theory-text h4 {
+  color: #1e293b;
+  margin: 15px 0 5px;
+  font-size: 1rem;
+}
+.theory-text ul {
+  margin-left: 20px;
+  color: #475569;
+  line-height: 1.6;
+}
+.theory-text p {
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* Diagramas Visuales CSS */
+.diagram-placeholder {
+  background: #f1f5f9;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.diagram-visual-sync,
+.diagram-visual-async {
+  display: flex;
+  gap: 2px;
+  margin-top: 15px;
+}
+
+.diagram-visual-sync div,
+.diagram-visual-async div {
+  width: 30px;
+  height: 30px;
+  background: #764ba2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.diagram-visual-async div {
+  background: #10b981;
+}
+
+@media (max-width: 768px) {
+  .theory-grid {
+    grid-template-columns: 1fr;
+  }
+  .help-floating-btn {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* ---------- SMART SCROLLBAR (hidden when not needed) ---------- */
+/* Default: hide native WebKit scrollbar when not needed; when .show-scroll is present it becomes visible */
+html:not(.show-scroll)::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+html.show-scroll::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+html.show-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+}
+html.show-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Firefox: prefer auto behavior but make track thin when visible */
+html.show-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+/* Fix keyframes typo (was @keyanimations) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===== BACK TO HOME BUTTON ===== */
+.back-to-home {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.back-to-home .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-dark);
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.back-to-home .btn:hover {
+  background: var(--primary-gradient);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-home .btn i {
+  font-size: 16px;
+}
