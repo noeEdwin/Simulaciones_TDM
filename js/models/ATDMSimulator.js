@@ -9,7 +9,7 @@
  * - Multiplexación estadística (m < n)
  * - Escaneo de buffers y llenado de tramas bajo demanda
  * 
- * @author Arquitecto de Software Senior
+ * @author Edwin Noé 
  * @version 1.0.0
  */
 
@@ -57,7 +57,9 @@ class ATDMSimulator {
             totalSlotsSent: 0,
             totalSlotsUsed: 0,
             totalDataProcessed: 0,
-            efficiency: 0
+            efficiency: 0,
+            totalBits: 0,
+            realBits: 0
         };
     }
 
@@ -70,11 +72,12 @@ class ATDMSimulator {
         // Parsear y limpiar datos
         const dataParts = dataString.split(',').map(s => s.trim());
         
-        // Distribuir datos a los canales
+        // Distribuir datos a los canales (permitir vacíos)
         dataParts.forEach((data, index) => {
-            if (index < this.numChannels && data.length > 0) {
+            if (index < this.numChannels) {
                 // Convertir el string en un array de caracteres (cola FIFO)
-                this.inputBuffers[index] = data.split('');
+                // Si está vacío, será un array vacío (dispositivo sin datos)
+                this.inputBuffers[index] = data.length > 0 ? data.split('') : [];
             }
         });
     }
@@ -124,6 +127,13 @@ class ATDMSimulator {
             if (this.currentFrame.length > 0) {
                 const partialFrame = [...this.currentFrame];
                 this.currentFrame = [];
+                
+                // Actualizar estadísticas para la trama parcial
+                this.stats.totalFramesSent++;
+                this.stats.totalSlotsSent += this.frameSize; // La trama siempre tiene tamaño fijo S
+                this.stats.totalSlotsUsed += partialFrame.length;
+                this.updateEfficiency();
+                
                 return partialFrame;
             }
             return null; // Fin de la transmisión
@@ -232,6 +242,33 @@ class ATDMSimulator {
         // Calcular datos pendientes
         const pending = this.inputBuffers.reduce((sum, buffer) => sum + buffer.length, 0);
         
+        // Mapeo de variables según la imagen proporcionada:
+        // F = número de tramas enviadas
+        const F = this.stats.totalFramesSent;
+        
+        // S = número de ranuras por trama
+        const S = this.frameSize;
+        
+        // R = número total de ranuras (F * S)
+        const R = this.stats.totalSlotsSent;
+        
+        // bd = bits de datos por ranura (8 bits)
+        const bd = 8;
+        
+        // bdir = bits de dirección por ranura (log2(N))
+        const bdir = this.addressBits;
+        
+        // bsync = bits de sincronización por trama (1 bit)
+        const bsync = 1;
+        
+        // Fórmula de bits totales (según imagen):
+        // Bits totales = F * S * bd + F * S * bdir + F * bsync
+        // Nota: F * S es equivalente a R
+        const totalBits = (F * S * bd) + (F * S * bdir) + (F * bsync);
+                         
+        // Bits Reales = Slots Usados * Bits Datos
+        const realBits = this.stats.totalSlotsUsed * bd;
+        
         return {
             totalRequests: this.stats.totalDataProcessed + pending,
             pending: pending,
@@ -240,7 +277,9 @@ class ATDMSimulator {
             framesSent: this.stats.totalFramesSent,
             totalSlots: this.stats.totalSlotsSent,
             usedSlots: this.stats.totalSlotsUsed,
-            addressBits: this.addressBits
+            addressBits: this.addressBits,
+            totalBits: totalBits,
+            realBits: realBits
         };
     }
 

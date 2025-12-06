@@ -331,6 +331,40 @@
             box-shadow: var(--shadow-sm);
         }
         
+        /* Nuevo estilo para trama unificada */
+        .frame-slots-unified {
+            display: flex;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .frame-slot-unified {
+            color: white;
+            padding: var(--space-2) var(--space-3);
+            font-family: 'Courier New', monospace;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border-right: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .frame-slot-unified:last-child {
+            border-right: none;
+        }
+        
+        /* Estilo especial para bit de tramado */
+        /* Estilo especial para bit de tramado */
+        .frame-slot-unified.framing-bit {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            font-weight: 800;
+            min-width: 2.5rem;
+            text-align: center;
+            border-left: 3px solid rgba(255, 215, 0, 0.5);
+            border-right: none;
+        }
+        
         .empty-state {
             text-align: center;
             padding: var(--space-8);
@@ -475,7 +509,7 @@
     <div id="root"></div>
     
     <!-- Cargar el simulador primero -->
-    <script src="../../js/models/ATDMSimulator.js"></script>
+    <script src="../../js/models/ATDMSimulator.js?v=6"></script>
     
     <!-- Script de integración con React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -538,17 +572,14 @@
                 setStats(sim.getStats());
             };
             
-            // Validación de entrada
+            // Validación de entrada (permitir campos vacíos)
             const inputValidation = useMemo(() => {
                 if (!inputData.trim()) {
                     return { valid: false, message: 'Ingresa datos para simular' };
                 }
                 
-                const items = inputData.split(',').map(item => item.trim()).filter(item => item.length > 0);
-                
-                if (items.length === 0) {
-                    return { valid: false, message: 'Datos vacíos' };
-                }
+                // Permitir campos vacíos - no filtrar elementos vacíos
+                const items = inputData.split(',').map(item => item.trim());
                 
                 if (items.length !== numChannels) {
                     return { 
@@ -557,7 +588,9 @@
                     };
                 }
                 
-                return { valid: true, message: `${items.length} elementos válidos` };
+                // Contar cuántos dispositivos tienen datos
+                const nonEmpty = items.filter(item => item.length > 0).length;
+                return { valid: true, message: `${nonEmpty} dispositivos con datos, ${items.length - nonEmpty} vacíos` };
             }, [inputData, numChannels]);
             
             const isInputValid = inputValidation.valid;
@@ -932,7 +965,7 @@
                                         inputBuffers.map((buffer, i) =>
                                             React.createElement('div', { key: i, className: 'buffer-card' },
                                                 React.createElement('div', { className: 'buffer-header' },
-                                                    `Canal ${i}`,
+                                                    `Canal ${i + 1}`,
                                                     React.createElement('span', {}, buffer.length || 0)
                                                 ),
                                                 React.createElement('div', { className: 'buffer-content' },
@@ -967,23 +1000,53 @@
                                             ? React.createElement('div', { className: 'empty-state' },
                                                 'Las tramas aparecerán aquí durante la simulación'
                                             )
-                                            : framesHistory.map((frame, i) =>
-                                                React.createElement('div', { key: i, className: 'frame-item' },
+                                            : framesHistory.map((frame, i) => {
+                                                // Los slots reales vienen en orden de llegada (S1, S2, ...).
+                                                // Queremos visualizar: [Empty] [S2] [S1] [Sync]
+                                                // Es decir, llenar de derecha a izquierda.
+                                                
+                                                const reversedFrame = [...frame].reverse(); // [S2, S1]
+                                                const emptySlotsCount = frameSize - frame.length;
+                                                
+                                                return React.createElement('div', { key: i, className: 'frame-item' },
                                                     React.createElement('div', { className: 'frame-item-header' },
-                                                        `Trama #${i + 1} (${frame.length} slots)`
+                                                        `Trama #${i + 1} (${frame.length}/${frameSize} slots)`
                                                     ),
-                                                    React.createElement('div', { className: 'frame-slots' },
-                                                        frame.map((slot, j) =>
+                                                    React.createElement('div', { className: 'frame-slots-unified' },
+                                                        // 1. Renderizar slots vacíos primero (Izquierda / Final de la cola)
+                                                        Array.from({ length: emptySlotsCount }).map((_, idx) => 
                                                             React.createElement('div', {
-                                                                key: j,
-                                                                className: 'frame-slot-modern'
+                                                                key: `empty-${idx}`,
+                                                                className: 'frame-slot-unified',
+                                                                style: { 
+                                                                    opacity: 0.5, 
+                                                                    background: 'rgba(0,0,0,0.1)',
+                                                                    borderRight: '2px solid rgba(255,255,255,0.1)'
+                                                                }
                                                             },
-                                                                `[${slot.binaryAddress}|${slot.data}] C${slot.channelID}`
+                                                                `[∅]`
                                                             )
+                                                        ),
+                                                        
+                                                        // 2. Renderizar slots de datos (Derecha / Inicio de la cola)
+                                                        reversedFrame.map((slot, idx) => 
+                                                            React.createElement('div', {
+                                                                key: `data-${idx}`,
+                                                                className: 'frame-slot-unified'
+                                                            },
+                                                                `[${slot.data}|${slot.binaryAddress}]`
+                                                            )
+                                                        ),
+                                                        
+                                                        // 3. Bit de tramado al final (Derecha extrema)
+                                                        React.createElement('div', {
+                                                            className: 'frame-slot-unified framing-bit'
+                                                        },
+                                                            i % 2 === 0 ? '1' : '0'
                                                         )
                                                     )
-                                                )
-                                            )
+                                                );
+                                            })
                                     )
                                 ),
                                 
@@ -1010,7 +1073,7 @@
                                         outputBuffers.map((buffer, i) =>
                                             React.createElement('div', { key: i, className: 'buffer-card' },
                                                 React.createElement('div', { className: 'buffer-header' },
-                                                    `Canal ${i}`,
+                                                    `Canal ${i + 1}`,
                                                     React.createElement('span', {}, buffer.length || 0)
                                                 ),
                                                 React.createElement('div', { className: 'buffer-content' },
@@ -1064,6 +1127,24 @@
                                     React.createElement('div', { className: 'stat-content' },
                                         React.createElement('div', { className: 'stat-label' }, 'Eficiencia'),
                                         React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, `${stats.efficiency}%`)
+                                    )
+                                ),
+                                React.createElement('div', { className: 'stat-card-modern' },
+                                    React.createElement('div', { className: 'stat-icon-modern' },
+                                        React.createElement('i', { className: 'fas fa-network-wired' })
+                                    ),
+                                    React.createElement('div', { className: 'stat-content' },
+                                        React.createElement('div', { className: 'stat-label' }, 'Bits Totales'),
+                                        React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, stats.totalBits)
+                                    )
+                                ),
+                                React.createElement('div', { className: 'stat-card-modern' },
+                                    React.createElement('div', { className: 'stat-icon-modern' },
+                                        React.createElement('i', { className: 'fas fa-database' })
+                                    ),
+                                    React.createElement('div', { className: 'stat-content' },
+                                        React.createElement('div', { className: 'stat-label' }, 'Bits Reales'),
+                                        React.createElement('div', { className: 'stat-value-modern stat-value-animated' }, stats.realBits)
                                     )
                                 )
                             ),
