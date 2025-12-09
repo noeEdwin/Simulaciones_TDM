@@ -258,6 +258,9 @@ function ComparisonFullApp() {
         // Si se generaron slots (o si el usuario quiere ver frames vacíos, pero ATDM suele ser bajo demanda)
         // En la visualización anterior siempre generábamos frame si había datos.
         if (asyncSlots.length > 0) {
+            // Invertir orden: El primer canal encontrado (A) va al último slot visual
+            asyncSlots.reverse();
+
             // Padding al inicio para alineación visual a la derecha (estilo solicitado previamente)
             while (asyncSlots.length < slotsPerFrame) {
                 asyncSlots.unshift({ type: 'empty', data: '∅', addr: '-' });
