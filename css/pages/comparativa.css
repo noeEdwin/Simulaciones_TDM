@@ -1,0 +1,356 @@
+/* CSS for Comparison Page */
+:root {
+    --sync-primary: #667eea;
+    --sync-secondary: #764ba2;
+    --async-primary: #10b981;
+    --async-secondary: #059669;
+    --bg-dark: #0f172a;
+    --panel-bg: rgba(255, 255, 255, 0.95);
+    --slot-size: 40px;
+}
+
+body {
+    background: var(--bg-dark); /* Dark background for contrast */
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.comp-header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.comp-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+/* Controls */
+.controls-area {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.fancy-input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-family: inherit;
+    width: 300px;
+}
+
+.btn-start {
+    background: linear-gradient(135deg, var(--sync-primary), var(--async-primary));
+    border: none;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn-start:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.btn-start:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Split Layout */
+.split-container {
+    display: flex;
+    flex-direction: column;
+    /* Removed flex: 1 to allow content to dictate height, but let's keep it to fill if needed */
+    flex: 1;
+    gap: 10px; /* Increased gap for better separation */
+    background: #334155;
+    padding: 20px; /* Add padding around the stack */
+}
+
+.panel {
+    /* flex: 1;  Let panels take necessary height */
+    width: 100%;
+    background: #f8fafc;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    min-width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.panel-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.panel-header h2 {
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Sync Panel Specifics */
+.panel-sync .panel-header h2 {
+    color: var(--sync-secondary);
+}
+.panel-sync {
+    /* border-right removed for vertical layout */
+    border-bottom: 1px solid #e2e8f0; /* Optional: separator if flush, but we have gap now */
+    border: none;
+}
+
+/* Async Panel Specifics */
+.panel-async .panel-header h2 {
+    color: var(--async-secondary);
+}
+
+/* Visualization Area */
+.vis-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+}
+
+/* Input Channels */
+.channels-wrapper {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.channel-box {
+    width: 60px;
+    background: white;
+    border-radius: 8px;
+    padding: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.channel-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.channel-buffer {
+    height: 100px;
+    background: #f1f5f9;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    padding: 2px;
+    overflow: hidden;
+    gap: 2px;
+}
+
+.data-item {
+    width: 100%;
+    height: 25px;
+    background: #94a3b8;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    font-weight: bold;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.panel-sync .data-item { background: var(--sync-primary); }
+.panel-async .data-item { background: var(--async-primary); }
+
+/* MUX */
+.mux-device {
+    width: 120px;
+    height: 60px;
+    background: #1e293b;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.mux-scan-line {
+    position: absolute;
+    top: -20px;
+    width: 2px;
+    height: 20px;
+    background: #ef4444;
+    transition: left 0.2s;
+}
+
+/* Frame Strip (Trama Resultante) */
+.frame-strip-container {
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+}
+
+.frame-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    display: block;
+    text-align: center;
+}
+
+.frame-track {
+    height: 70px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    /* We will use flex-direction row-reverse to have new items appear from right? 
+       Actually, standard left-to-right pushing is better for timeline. 
+       Let's use a container that shifts or just a list. */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.slot-stream {
+    display: flex;
+    gap: 5px;
+    /* Animation: We will add items to the end and auto-scroll or just flex-start */
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 5px; /* for scrollbar */
+    scroll-behavior: smooth;
+    flex-direction: row-reverse; /* Items appear on the left (newest) or right? Let's assume standard flow */
+    justify-content: flex-end; /* Align to right so new items appear there and push back? No, let's stick to flex-start and scroll to end */
+}
+
+/* Slot Styles */
+.slot {
+    min-width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: white;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.slot.sync {
+    background: var(--sync-primary);
+}
+
+.slot.async {
+    background: var(--async-primary);
+}
+
+.slot.empty {
+    background: transparent;
+    border: 2px dashed #cbd5e1;
+    color: #94a3b8;
+}
+
+.slot-addr {
+    font-size: 0.6rem;
+    background: rgba(0,0,0,0.2);
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Metrics Table */
+.metrics-panel {
+    margin-top: auto;
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.metrics-table th {
+    text-align: left;
+    color: var(--text-light);
+    font-weight: 600;
+    padding: 5px;
+}
+
+.metrics-table td {
+    font-weight: 700;
+    padding: 5px;
+    color: var(--text-dark);
+}
+
+.metric-val.good { color: var(--async-secondary); }
+.metric-val.bad { color: #ef4444; }
+
+/* Animations */
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .split-container {
+        flex-direction: column;
+    }
+    .panel {
+        min-height: 50vh;
+    }
+}
