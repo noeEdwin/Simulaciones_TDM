@@ -207,11 +207,15 @@ function ComparisonFullApp() {
             // Calcular bits de dirección
             var bitsNeeded = Math.max(1, Math.ceil(Math.log2(numChannels + 1)));
 
-            // ORDEN INVERSO: empezar desde el último canal hacia el primero
-            // Iterar desde el último canal (numChannels - 1) hacia el primero (0)
-            for (var offset = 0; offset < numChannels; offset++) {
-                if (filledCount >= slotsPerFrame) break;
-                // Calcular índice inverso con rotación basada en el tick
+            // Llenar slots (Multipass / Greedy Round Robin)
+            // Permitimos múltiples pasadas sobre los canales para llenar la trama
+            var attempts = 0;
+            var maxAttempts = numChannels * slotsPerFrame; // Evitar loop infinito
+            
+            while (filledCount < slotsPerFrame && attempts < maxAttempts) {
+                // Calcular índice inverso con rotación basada en el tick + intentos
+                // Esto asegura que sigamos rotando para buscar datos
+                var offset = attempts % numChannels;
                 var baseIdx = numChannels - 1 - offset;
                 var chIdx = ((baseIdx - (tick - 1)) % numChannels + numChannels) % numChannels;
                 
@@ -226,6 +230,7 @@ function ComparisonFullApp() {
                     });
                     filledCount++;
                 }
+                attempts++;
             }
 
             // Si hay datos, crear trama (con padding si es necesario)
@@ -250,15 +255,15 @@ function ComparisonFullApp() {
                     return updated;
                 });
 
-                // Cálculo de bits ATDM:
-                // - Cada slot con datos: 8 bits dato + bits dirección
-                // - Cada slot vacío: 8 bits (marcador vacío, sin dirección)
-                // - 2 bits framing por trama
+                // Cálculo de bits ATDM según fórmula:
+                // Bits Totales = (Tramas × Ranuras × 8) + (Tramas × Ranuras × BitsDirección) + (Tramas × 1)
+                // Por trama: (slotsPerFrame * 8) + (slotsPerFrame * bitsNeeded) + 1
+                
                 var realsCount = asyncSlots.filter(function(s) { return s.type === 'async-data'; }).length;
-                var emptyCount = asyncSlots.filter(function(s) { return s.type === 'empty'; }).length;
                 var bitsRealThisFrame = realsCount * 8; // Solo los bits de datos reales
-                // Total: slots datos × (8 + addr) + slots vacíos × 8 + 2 framing
-                var bitsTotalThisFrame = (realsCount * (8 + bitsNeeded)) + (emptyCount * 8) + 2;
+                
+                // Total por trama según fórmula del usuario
+                var bitsTotalThisFrame = (slotsPerFrame * 8) + (slotsPerFrame * bitsNeeded) + 1;
                 
                 setAsyncMetrics(function(prev) {
                     return { 
@@ -308,9 +313,11 @@ function ComparisonFullApp() {
                 if (updated.length > 10) updated = updated.slice(updated.length - 10);
                 return updated;
             });
-            // Bits: cada slot = 8 bits, + 2 bits framing por trama
+            // Bits Síncrono:
+            // Reales: Solo datos (8 bits)
+            // Total: (NumCanales * 8) + 1 bit framing
             var bitsRealSync = realCount * 8;
-            var bitsTotalSync = (numCh * 8) + 2; // Todos los slots (incluidos vacíos) + framing
+            var bitsTotalSync = (numCh * 8) + 1; 
             setSyncMetrics(function(prev) {
                 return { 
                     real: prev.real + bitsRealSync, 
