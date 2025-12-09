@@ -153,6 +153,14 @@ function ComparisonFullApp() {
     
     // Track del índice de iteración para orden inverso de canales
     var channelIterRef = useRef(0);
+    
+    // Puntero de escaneo Round Robin (persistente entre ticks para ATDM real)
+    var scanPointerRef = useRef(0);
+
+    // Helper para binario
+    function decimalToBinary(decimal, bits) {
+        return decimal.toString(2).padStart(bits, '0');
+    }
 
     // Reset
     function resetSim() {
@@ -160,6 +168,7 @@ function ComparisonFullApp() {
         setTick(0);
         frameCounterRef.current = 0;
         channelIterRef.current = 0;
+        scanPointerRef.current = 0;
         
         var rawChannels = inputData.split(',').map(function(s) { return s.trim(); });
         var n = rawChannels.length;
@@ -198,93 +207,102 @@ function ComparisonFullApp() {
     useEffect(function() {
         if (tick === 0) return;
 
-        // ASYNC - Procesar trama con ORDEN INVERSO (último canal primero: E, C, A)
-        setInputBuffers(function(currentBuffers) {
-            var nextBuffers = currentBuffers.map(function(b) { return b.slice(); });
-            var asyncSlots = [];
-            var filledCount = 0;
+        // ASYNC - Lógica basada en ATDMSimulator.js (Round Robin persistente)
+        var currentBuffers = inputBuffers;
+        var nextBuffers = currentBuffers.map(function(b) { return b.slice(); });
+        var numCh = nextBuffers.length;
+        var asyncSlots = [];
+        
+        // Simular el llenado de slots uno por uno usando el puntero de escaneo
+        for (var s = 0; s < slotsPerFrame; s++) {
+            var scannedCount = 0;
+            var slotFound = false;
             
-            // Calcular bits de dirección
-            var bitsNeeded = Math.max(1, Math.ceil(Math.log2(numChannels + 1)));
-
-            // Llenar slots (Multipass / Greedy Round Robin)
-            // Permitimos múltiples pasadas sobre los canales para llenar la trama
-            var attempts = 0;
-            var maxAttempts = numChannels * slotsPerFrame; // Evitar loop infinito
-            
-            while (filledCount < slotsPerFrame && attempts < maxAttempts) {
-                // Calcular índice inverso con rotación basada en el tick + intentos
-                // Esto asegura que sigamos rotando para buscar datos
-                var offset = attempts % numChannels;
-                var baseIdx = numChannels - 1 - offset;
-                var chIdx = ((baseIdx - (tick - 1)) % numChannels + numChannels) % numChannels;
+            // Buscar siguiente canal con datos (Round Robin)
+            while (scannedCount < numCh && !slotFound) {
+                var chIdx = (scanPointerRef.current + scannedCount) % numCh;
                 
                 if (nextBuffers[chIdx] && nextBuffers[chIdx].length > 0) {
+                    // Encontramos datos
                     var char = nextBuffers[chIdx].shift();
-                    var addr = chIdx.toString(2).padStart(bitsNeeded, '0');
-                    asyncSlots.push({ 
-                        type: 'async-data', 
-                        data: char, 
-                        addr: addr, 
-                        chIdx: chIdx 
+                    
+                    asyncSlots.push({
+                        type: 'async-data',
+                        data: char,
+                        addr: decimalToBinary(chIdx, Math.ceil(Math.log2(numChannels))),
+                        chIdx: chIdx
                     });
-                    filledCount++;
+                    
+                    // Actualizar puntero para la próxima vez (siguiente canal)
+                    scanPointerRef.current = (chIdx + 1) % numCh;
+                    slotFound = true;
+                } else {
+                    scannedCount++;
                 }
-                attempts++;
+            }
+            
+            // Si escaneamos todos y no encontramos nada, terminamos este frame (quedará parcial o vacío)
+            if (!slotFound) {
+                // Avanzamos el puntero si no encontramos nada pero había datos globales (opcional, pero mantiene el giro)
+                // En ATDMSimulator: if (!slotCreated && hasData) scanPointer = (scanPointer + 1) % num;
+                // Aquí simplificamos: si no hay datos en NINGÚN canal, salimos del loop de slots
+                var hasAnyData = nextBuffers.some(function(b) { return b.length > 0; });
+                if (hasAnyData) {
+                     scanPointerRef.current = (scanPointerRef.current + 1) % numCh;
+                } else {
+                     break; // No hay más datos en absoluto
+                }
+            }
+        }
+
+        // Si se generaron slots (o si el usuario quiere ver frames vacíos, pero ATDM suele ser bajo demanda)
+        // En la visualización anterior siempre generábamos frame si había datos.
+        if (asyncSlots.length > 0) {
+            // Padding al inicio para alineación visual a la derecha (estilo solicitado previamente)
+            while (asyncSlots.length < slotsPerFrame) {
+                asyncSlots.unshift({ type: 'empty', data: '∅', addr: '-' });
             }
 
-            // Si hay datos, crear trama (con padding si es necesario)
-            if (asyncSlots.length > 0) {
-                // Padding con espacios vacíos
-                while (asyncSlots.length < slotsPerFrame) {
-                    asyncSlots.push({ type: 'empty', data: '∅', addr: '-' });
-                }
+            frameCounterRef.current++;
+            var newFrame = { 
+                id: frameCounterRef.current, 
+                slots: asyncSlots, 
+                framingBit: frameCounterRef.current % 2 
+            };
 
-                frameCounterRef.current++;
-                var newFrame = { 
-                    id: frameCounterRef.current, 
-                    slots: asyncSlots, 
-                    framingBit: frameCounterRef.current % 2 
+            setAsyncHistory(function(prev) { 
+                var updated = prev.concat([newFrame]);
+                if (updated.length > 10) updated = updated.slice(updated.length - 10);
+                return updated;
+            });
+
+            var bitsNeeded = Math.ceil(Math.log2(numChannels));
+            var realsCount = asyncSlots.filter(function(s) { return s.type === 'async-data'; }).length;
+            var bitsRealThisFrame = realsCount * 8; 
+            var bitsTotalThisFrame = (slotsPerFrame * 8) + (slotsPerFrame * bitsNeeded) + 1;
+            
+            setAsyncMetrics(function(prev) {
+                return { 
+                    real: prev.real + bitsRealThisFrame, 
+                    total: prev.total + bitsTotalThisFrame 
                 };
+            });
 
-                // ORDEN ASCENDENTE: Nuevas tramas se agregan AL FINAL (push, no unshift)
-                setAsyncHistory(function(prev) { 
-                    var updated = prev.concat([newFrame]);
-                    // Mantener máximo 10 para visualización
-                    if (updated.length > 10) updated = updated.slice(updated.length - 10);
-                    return updated;
+            // Output buffers
+            setOutputBuffersAsync(function(prevOut) {
+                var nextOut = prevOut.map(function(b) { return b.slice(); });
+                asyncSlots.forEach(function(slot) {
+                    if (slot.type === 'async-data' && nextOut[slot.chIdx]) {
+                        nextOut[slot.chIdx].push(slot.data);
+                    }
                 });
+                return nextOut;
+            });
+            
+            // Actualizar buffers de entrada
+            setInputBuffers(nextBuffers);
+        }
 
-                // Cálculo de bits ATDM según fórmula:
-                // Bits Totales = (Tramas × Ranuras × 8) + (Tramas × Ranuras × BitsDirección) + (Tramas × 1)
-                // Por trama: (slotsPerFrame * 8) + (slotsPerFrame * bitsNeeded) + 1
-                
-                var realsCount = asyncSlots.filter(function(s) { return s.type === 'async-data'; }).length;
-                var bitsRealThisFrame = realsCount * 8; // Solo los bits de datos reales
-                
-                // Total por trama según fórmula del usuario
-                var bitsTotalThisFrame = (slotsPerFrame * 8) + (slotsPerFrame * bitsNeeded) + 1;
-                
-                setAsyncMetrics(function(prev) {
-                    return { 
-                        real: prev.real + bitsRealThisFrame, 
-                        total: prev.total + bitsTotalThisFrame 
-                    };
-                });
-
-                // Output buffers
-                setOutputBuffersAsync(function(prevOut) {
-                    var nextOut = prevOut.map(function(b) { return b.slice(); });
-                    asyncSlots.forEach(function(slot) {
-                        if (slot.type === 'async-data' && nextOut[slot.chIdx]) {
-                            nextOut[slot.chIdx].push(slot.data);
-                        }
-                    });
-                    return nextOut;
-                });
-            }
-            return nextBuffers;
-        });
 
         // SYNC - Simulación paralela
         var rawChannels = inputData.split(',').map(function(s) { return s.trim(); });
@@ -297,7 +315,8 @@ function ComparisonFullApp() {
             // Número de canales para sync
             var numCh = rawChannels.length;
             
-            for (var i = 0; i < numCh; i++) {
+            // ORDEN INVERSO: De último canal a primero
+            for (var i = numCh - 1; i >= 0; i--) {
                 var char = rawChannels[i] ? rawChannels[i][charIdx] : undefined;
                 var hasData = char !== undefined && char !== "";
                 syncSlots.push({
