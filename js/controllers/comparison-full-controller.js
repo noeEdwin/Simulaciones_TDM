@@ -489,6 +489,7 @@ function ComparisonFullApp() {
       );
 
       if (charIdx < maxLen) {
+        console.log("Generando trama Sync:", { tick, charIdx, maxLen, rawChannels });
         var syncSlots = [];
         var realCount = 0;
         var numCh = rawChannels.length;
@@ -860,39 +861,6 @@ function ComparisonFullApp() {
       React.createElement(Device, { type: "mux", label: "MULTIPLEXOR" }),
       React.createElement(ArrowMove, null),
 
-      // Historial Async
-      React.createElement(
-        "div",
-        { className: "hist-card" },
-        React.createElement(
-          "h3",
-          null,
-          React.createElement("i", {
-            className: "fas fa-layer-group",
-            style: { color: "#6366f1" },
-          }),
-          " Historial de Tramas (Asíncrono)"
-        ),
-        React.createElement(
-          "div",
-          { className: "history-list" },
-          asyncHistory.length === 0
-            ? React.createElement(
-                "p",
-                { style: { textAlign: "center", color: "#94a3b8" } },
-                "Esperando tramas..."
-              )
-            : asyncHistory.map(function (frame) {
-                return React.createElement(HistoryFrame, {
-                  key: "async" + frame.id,
-                  id: frame.id,
-                  slots: frame.slots,
-                  framingBit: frame.framingBit,
-                });
-              })
-        )
-      ),
-
       // Historial Sync
       React.createElement(
         "div",
@@ -922,6 +890,39 @@ function ComparisonFullApp() {
                   slots: frame.slots,
                   framingBit: frame.framingBit,
                   totalSlots: frame.totalSlots || numChannels,
+                });
+              })
+        )
+      ),
+
+      // Historial Async
+      React.createElement(
+        "div",
+        { className: "hist-card" },
+        React.createElement(
+          "h3",
+          null,
+          React.createElement("i", {
+            className: "fas fa-layer-group",
+            style: { color: "#6366f1" },
+          }),
+          " Historial de Tramas (Asíncrono)"
+        ),
+        React.createElement(
+          "div",
+          { className: "history-list" },
+          asyncHistory.length === 0
+            ? React.createElement(
+                "p",
+                { style: { textAlign: "center", color: "#94a3b8" } },
+                "Esperando tramas..."
+              )
+            : asyncHistory.map(function (frame) {
+                return React.createElement(HistoryFrame, {
+                  key: "async" + frame.id,
+                  id: frame.id,
+                  slots: frame.slots,
+                  framingBit: frame.framingBit,
                 });
               })
         )
