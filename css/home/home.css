@@ -188,6 +188,11 @@ body {
   box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
 }
 
+.compare-icon {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  box-shadow: 0 10px 20px rgba(253, 160, 133, 0.3);
+}
+
 .card h3 {
   font-size: 1.8rem;
   margin-bottom: 15px;
