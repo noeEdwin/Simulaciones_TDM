@@ -500,7 +500,7 @@ function ComparisonFullApp() {
           syncSlots.push({
             type: hasData ? "sync-data" : "empty",
             data: hasData ? char : "∅",
-            addr: "CH" + i, // Dirección implícita por posición
+            addr: "" + i, // Dirección implícita: solo número de canal
           });
           if (hasData) realCount++;
         }
