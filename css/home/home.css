@@ -189,8 +189,8 @@ body {
 }
 
 .compare-icon {
-  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-  box-shadow: 0 10px 20px rgba(253, 160, 133, 0.3);
+  background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); /* Orange to Pink/Red */
+  box-shadow: 0 10px 20px rgba(221, 36, 118, 0.3);
 }
 
 .card h3 {
