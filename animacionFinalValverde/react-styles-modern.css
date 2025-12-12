@@ -1380,13 +1380,18 @@
     }
 
     .button-controls {
-        flex-direction: row;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 columns default on mobile */
+        gap: var(--space-sm);
+    }
+
+    .button-controls > *:last-child {
+        grid-column: 1 / -1; /* Make the last button (Reset) take full width */
     }
 
     .btn-modern {
-        flex: 1;
-        min-width: 140px; /* Increased to force 2-column wrap on larger mobiles */
+        width: 100%;
+        min-width: 0; /* Let grid handle width */
     }
 
     .frame-slots {
