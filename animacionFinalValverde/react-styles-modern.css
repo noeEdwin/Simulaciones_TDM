@@ -272,8 +272,12 @@
     border-radius: var(--radius-lg);
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
     font-size: 0.875rem;
-    resize: vertical;
+    resize: none !important;
     min-height: 100px;
+    max-height: 150px;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    white-space: pre-wrap !important;
     transition: all var(--transition-normal);
     background: var(--surface-1);
 }
@@ -2115,5 +2119,33 @@
         overflow-y: auto;
         margin-bottom: var(--section-gap);
         width: 100%;
+        border-right: 1px solid var(--glass-border);
+        border-bottom: 2px solid var(--glass-border);
+    }
+}
+
+@media (max-width: 768px) {
+    .app-header {
+        padding: var(--space-md) 0;
+    }
+
+    .main-layout {
+        padding: var(--small-gap);
+        gap: var(--space-md);
+    }
+
+    .control-sidebar {
+        padding: var(--space-md);
+        margin-bottom: var(--space-md);
+        max-height: 45vh; /* Less height on mobile */
+    }
+
+    .data-input-modern {
+        font-size: 16px; /* Prevent zoom on mobile */
+    }
+
+    .tdm-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: var(--space-xs);
     }
 }

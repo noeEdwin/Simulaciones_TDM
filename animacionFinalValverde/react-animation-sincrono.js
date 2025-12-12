@@ -655,7 +655,7 @@ function ModernTDMApp() {
         const dataParts = inputData.split(',').map(d => d.trim().substring(0, 8));
         const newChannels = Array.from({ length: numChannels }, (_, i) => ({
             id: i + 1,
-            data: dataParts[i] || `DATA${i + 1}`,
+            data: dataParts[i] || '',
             currentBit: 0
         }));
         setChannels(newChannels);
