@@ -634,6 +634,12 @@ function ModernTDMApp() {
     });
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [showAdvanced, setShowAdvanced] = useState(true);
+    const [darkMode, setDarkMode] = useState(false);
+
+    // Efecto para tema oscuro
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    }, [darkMode]);
 
     const animationInterval = useRef(null);
 
@@ -906,8 +912,9 @@ function ModernTDMApp() {
                 React.createElement('div', { className: 'header-actions' },
                     React.createElement('button', {
                         className: 'btn-icon',
-                        onClick: () => setShowAdvanced(!showAdvanced)
-                    }, showAdvanced ? '🔧' : '⚙️')
+                        onClick: () => setDarkMode(!darkMode),
+                        title: darkMode ? 'Modo Claro' : 'Modo Oscuro'
+                    }, darkMode ? '☀️' : '🌙')
                 )
             )
         ),

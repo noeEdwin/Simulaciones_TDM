@@ -2071,3 +2071,49 @@
         flex-direction: column;
     }
 }
+
+/* ===== MANUAL THEME OVERRIDES ===== */
+[data-theme="dark"] {
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --card-gradient: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.7));
+    --surface-0: #0f172a;
+    --surface-1: #1e293b;
+    --surface-2: #334155;
+    --surface-3: #475569;
+    --surface-4: #64748b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --glass-bg: rgba(30, 41, 59, 0.5);
+    --glass-border: rgba(148, 163, 184, 0.2);
+    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="light"] {
+    --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    --card-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+    --surface-0: #ffffff;
+    --surface-1: #f8fafc;
+    --surface-2: #f1f5f9;
+    --surface-3: #e2e8f0;
+    --surface-4: #cbd5e1;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== RESPONSIVE SIDEBAR FIX ===== */
+@media (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .control-sidebar {
+        position: relative; 
+        top: 0;
+        max-height: 500px; /* Limit height */
+        overflow-y: auto;
+        margin-bottom: var(--section-gap);
+        width: 100%;
+    }
+}

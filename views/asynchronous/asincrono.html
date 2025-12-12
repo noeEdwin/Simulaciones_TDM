@@ -503,6 +503,98 @@
             margin-top: var(--space-4);
             height: 200px;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .app-header-modern {
+                padding: var(--space-4);
+            }
+
+            .header-content-modern {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .brand-modern {
+                flex-direction: column;
+                gap: var(--space-2);
+            }
+
+            .brand-icon-modern {
+                font-size: 2rem;
+            }
+
+            .brand-title {
+                font-size: 1.5rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .main-layout-modern {
+                padding: var(--space-4);
+                gap: var(--space-6);
+                grid-template-columns: 1fr;
+            }
+
+            .control-sidebar-modern {
+                position: static;
+                width: 100%;
+                margin-bottom: var(--space-4);
+                max-height: 50vh; /* Limit height to allow seeing visualization */
+                overflow-y: auto; /* Enable scroll within sidebar if needed */
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .visualization-main-modern {
+                width: 100%;
+                overflow-x: hidden;
+            }
+            
+            .flow-diagram {
+                padding: var(--space-4);
+                overflow-x: auto;
+            }
+
+            .buffers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .processor-block {
+                padding: var(--space-4);
+            }
+
+            .frame-slot-modern, 
+            .frame-slot-unified {
+                font-size: 0.7rem;
+                padding: var(--space-1) var(--space-2);
+            }
+
+            .frames-scroll {
+                max-height: 300px;
+            }
+            
+            .stats-grid-modern {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card-modern {
+                padding: var(--space-3);
+            }
+            
+            .stat-icon-modern {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.5rem;
+            }
+            
+            .data-input-modern {
+                box-sizing: border-box !important;
+                max-width: 100% !important;
+                white-space: pre-wrap !important;
+            }
+        }
     </style>
 </head>
 <body>
